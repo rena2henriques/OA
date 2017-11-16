@@ -82,6 +82,7 @@ OmegaQ = {};
 for i=1:length(points(1,:))
     for j=i+1:length(points(1,:))
         
+             % dar clear dos OmegaP e OmegaQ
             OmegaP=[];
             OmegaQ=[]; 
         
@@ -89,17 +90,57 @@ for i=1:length(points(1,:))
             %calcular a distancia entre o sensor s e o ponto i
             %calcular a distancia entre o sensor s e o ponto j
             if (norm(sensors(:,s) - points(:,i)) < norm(sensors(:,s) - points(:,j)))
-                OmegaP = [OmegaP , sensors(:,s)]; %<---- VAI ESTAR MAL, CONFIRMAR
+                OmegaP = [OmegaP , s]; %<-- guardamos os indices para depois podermos aceder à matriz a e B
             else    
-                OmegaQ = [OmegaQ , sensors(:,s)];
+                OmegaQ = [OmegaQ , s];
             end
             
         end
         
-   
-        % calculo do erro, comparar com o previous error
-        % dar clear dos OmegaP e OmegaQ
+        % obter novas posicoes de xp por minimizacao    
+        cvx_begin quiet   
+        variable xp(2, 1);
+        variable tp;
+
+        Term1=0;
+
+        for k=1:length(OmegaP)
+            Term1 = Term1 + (a(:,OmegaP(k))'*[xp(:) ; tp] - B(OmegaP(k)))^2;
+        end
+
+        minimize(Term1);
         
+        % subject to  
+        xp(:)'*xp(:)<= tp;
+                   
+        cvx_end;
+        
+        %nova posicao de xq
+        cvx_begin quiet   
+        variable xq(2, 1);
+        variable xq;
+
+        Term1=0;
+
+        for k=1:length(OmegaQ)
+            Term1 = Term1 + (a(:,OmegaQ(k))'*[xq(:) ; tq] - B(OmegaQ(k)))^2;
+        end
+
+        minimize(Term1);
+        
+        % subject to  
+        xq(:)'*xq(:)<= tq;
+                   
+        cvx_end;
+        
+        % calculo do erro, comparar com o previous error
+        erro=0
+        for k=1:length(OmegaP)
+            erro=erro+(norm(sensors(:,OmegaP(k))-xp(:))-d(OmegaP(k)))*(norm(sensors(:,OmegaP(k))-xp(:))-d(OmegaP(k)));
+        end
+        for k=1:length(OmegaQ)
+            erro=erro+(norm(sensors(:,OmegaQ(k))-xq(:))-d(OmegaQ(k)))*(norm(sensors(:,OmegaQ(k))-xq(:))-d(OmegaQ(k)));
+        end
         % se for menor, guardar apenas o i e j deste erro
         % c.c. deixa-se estar
         
