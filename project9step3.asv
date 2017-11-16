@@ -75,13 +75,6 @@ grid on;
 load('part2points.mat');
 load('group15dataset.mat');
 
-%variaveis alfa e beta
-for i=1:64
-   B(i)=d(:,i)^2-norm(sensors(:,i))^2;
-end
-
-a=[-2*sensors; ones(1,64)];
-
 points = (unique(round(x, 3)','rows'))';
 
 OmegaP = {};
@@ -131,7 +124,7 @@ for i=1:length(points(1,:))
         %nova posicao de xq
         cvx_begin quiet   
         variable xq(2, 1);
-        variable tq;
+        variable xq;
 
         Term1=0;
 
@@ -147,7 +140,7 @@ for i=1:length(points(1,:))
         cvx_end;
         
         % calculo do erro, comparar com o previous error
-        erro=0;
+        erro=0
         for k=1:length(OmegaP)
             erro=erro+(norm(sensors(:,OmegaP(k))-xp(:))-d(OmegaP(k)))*(norm(sensors(:,OmegaP(k))-xp(:))-d(OmegaP(k)));
         end
@@ -169,7 +162,6 @@ end
 figure(1); 
 clf; 
 plot(xp(1),xp(2),'ro'); 
-hold on
 plot(xq(1),xq(2),'ro'); 
 axis('equal'); 
 grid on;
