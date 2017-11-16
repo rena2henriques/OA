@@ -75,28 +75,26 @@ grid on;
 
 
 points = (unique(round(x, 3)','rows'))';
-
-OmegaP = {};
-OmegaQ = {};
-
+ncomb=(length(points)-1)*length(points)/2;
+OmegaP = {ncomb};
+OmegaQ = {ncomb};
+K=0;
 for i=1:length(points(1,:))
     for j=i+1:length(points(1,:))
-        
-            OmegaP=[];
-            OmegaQ=[]; 
         
         for s=1:64 % for all the sensors
             %calcular a distancia entre o sensor s e o ponto i
             %calcular a distancia entre o sensor s e o ponto j
             if (norm(sensors(:,s) - points(:,i)) < norm(sensors(:,s) - points(:,j)))
-                OmegaP = [OmegaP , sensors(:,s)]; %<---- VAI ESTAR MAL, CONFIRMAR
+                OmegaP{K}= [OmegaP{K} , sensors(:,s)]; %<---- VAI ESTAR MAL, CONFIRMAR
             else    
-                OmegaQ = [OmegaQ , sensors(:,s)];
+                OmegaQ{K} = [OmegaQ{K}, sensors(:,s)];
             end
-            
+            K=K+1;
         end
         
-   
+    
+        
         % calculo do erro, comparar com o previous error
         % dar clear dos OmegaP e OmegaQ
         
