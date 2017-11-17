@@ -115,16 +115,11 @@ for i=1:length(points(1,:))
         variable xp(2, 1);
         variable tp;
 
-        Term1=0;
-
-        for k=1:length(OmegaP)
-            Term1 = Term1 + (a(:,OmegaP(k))'*[xp(:) ; tp] - B(OmegaP(k)))^2;
-        end
-
+        Term1 = sum( a(:,OmegaP)'*[xp ; tp] - B(OmegaP)^2 );
         minimize(Term1);
         
         % subject to  
-        xp(:)'*xp(:)<= tp;
+        xp'*xp<= tp;
                    
         cvx_end;
         
@@ -133,16 +128,13 @@ for i=1:length(points(1,:))
         variable xq(2, 1);
         variable tq;
 
-        Term1=0;
+        Term1 = sum( (a(:,OmegaQ)'*[xq ; tq] - B(OmegaQ)^2 );
 
-        for k=1:length(OmegaQ)
-            Term1 = Term1 + (a(:,OmegaQ(k))'*[xq(:) ; tq] - B(OmegaQ(k)))^2;
-        end
 
         minimize(Term1);
         
         % subject to  
-        xq(:)'*xq(:)<= tq;
+        xq'*xq<= tq;
                    
         cvx_end;
         
