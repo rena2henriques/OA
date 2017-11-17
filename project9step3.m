@@ -147,13 +147,15 @@ for i=1:length(points(1,:))
         cvx_end;
         
         % calculo do erro, comparar com o previous error
-        erro=0;
-        for k=1:length(OmegaP)
-            erro=erro+(norm(sensors(:,OmegaP(k))-xp(:))-d(OmegaP(k)))*(norm(sensors(:,OmegaP(k))-xp(:))-d(OmegaP(k)));
-        end
-        for k=1:length(OmegaQ)
-            erro=erro+(norm(sensors(:,OmegaQ(k))-xq(:))-d(OmegaQ(k)))*(norm(sensors(:,OmegaQ(k))-xq(:))-d(OmegaQ(k)));
-        end
+%        erro=0;
+        erro = sum( pow2(norm(sensors(:,OmegaP) - xp(:) ) -d(OmegaP) );
+        erro += sum( pow2(norm(sensors(:,OmegaQ) - xq(:) ) -d(OmegaQ) );
+%        for k=1:length(OmegaP)
+%            erro=erro+(norm(sensors(:,OmegaP(k))-xp(:))-d(OmegaP(k)))*(norm(sensors(:,OmegaP(k))-xp(:))-d(OmegaP(k)));
+%        end
+%        for k=1:length(OmegaQ)
+%            erro=erro+(norm(sensors(:,OmegaQ(k))-xq(:))-d(OmegaQ(k)))*(norm(sensors(:,OmegaQ(k))-xq(:))-d(OmegaQ(k)));
+%        end
         % se for menor, guardar apenas o i e j deste erro
         % c.c. deixa-se estar
         if(erro<erromin)
