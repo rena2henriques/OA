@@ -1,0 +1,12 @@
+% equidistant classes
+class = [[0 0 1];[0 1 0];[1 0 0];];
+
+t = [];
+for i = 1:60
+    % generates a random integer between 1 and 3
+    classtype(i) = round(rand*2)+1;
+    
+    t = [t; class(classtype(i),:)];
+end
+
+t = awgn(t, 10, 'measured')
