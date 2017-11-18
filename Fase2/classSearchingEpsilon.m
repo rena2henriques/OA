@@ -16,10 +16,10 @@ y=y';
 %% Grouping points
 
 % distance ref
-epsilon = 0.5;
+epsilon = 0.7;
 
 % Weight of term 2
-ro = 10
+ro = 2
 
 cvx_begin quiet
     variable x(3, 60);
@@ -47,7 +47,7 @@ cvx_begin quiet
 cvx_end
 
 %plot the result
-figure(1); 
+figure(2); 
 clf; 
 % printing in 2D for now
 %plot(x(1,:),x(2,:),'ro'); 
