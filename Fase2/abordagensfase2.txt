@@ -1,0 +1,9 @@
+
+1ª abordagem:
+
+fazer a minimização da soma das distâncias entre cada ponto e uma certa classe x e depois dizer que a norma de yn - ym tem que ser menor que uma referência epsilon
+
+2ª abordagem:
+
+Utilizar um método qualquer de clustering, como a logistic regression, para criar retas de separação entre as várias classes. Depois de termos a separação entre as várias classes podemos fazer uma média ou algo do género para aproximar os vários y num só ponto que corresponderá a a, b ou c
+

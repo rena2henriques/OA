@@ -94,9 +94,9 @@ xqmin=zeros(2,1);
 for i=1:length(points(1,:))
     for j=i+1:length(points(1,:))
         
-             % dar clear dos OmegaP e OmegaQ
-            OmegaP=[];
-            OmegaQ=[]; 
+        % dar clear dos OmegaP e OmegaQ
+        OmegaP=[];
+        OmegaQ=[]; 
         
         for s=1:64 % for all the sensors
             %calcular a distancia entre o sensor s e o ponto i
@@ -160,7 +160,6 @@ for i=1:length(points(1,:))
             erromin=erro;
             xpmin=xp;
             xqmin=xq;
-            
         end
         
     end
@@ -173,16 +172,4 @@ hold on
 plot(xq(1),xq(2),'ro'); 
 axis('equal'); 
 grid on;
-
-% Dividir os sensores todos nos que estão mais próximos do ponto p e nos
-% que estão mais próximos do ponto q
-
-% Fazer estimativa de posição para todos os sensores de cada subsecção e
-% obter o melhor ponto para cada subsecção
-
-% calcular o erro
-
-% Fazer isto para todas as combinações de pontos e o escolher os pontos que
-% gerem o menor erro
-
 
