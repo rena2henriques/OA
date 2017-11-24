@@ -1,0 +1,63 @@
+
+1ª abordagem:
+
+fazer a minimização da soma das distâncias entre cada ponto e uma certa classe x e depois dizer que a norma de yn - ym tem que ser menor que uma referência epsilon
+
+- utilizando este método, apesar de certo modo funcionar, é muito pouco fiável, uma vez que o epsilon precisaria de variar com a distância entre classes e com a amplitude do noise.
+
+Distancia minima
+distancia ao centroide
+
+2ª abordagem:
+
+REFERIR CUMMINGS e coisas do género no relatório
+
+Utilizar um método qualquer de clustering, como a logistic regression, para criar retas de separação entre as várias classes. Depois de termos a separação entre as várias classes podemos fazer uma média ou algo do género para aproximar os vários y num só ponto que corresponderá a a, b ou c
+
+
+3ª abordagem:
+
+Dividir pelo termo proporcional dos vizinhos + 10^-6
+
+4ª abordagem:
+
+Dividir pelo termo proporcional dos vizinhos ao quadrado + 10^-6
+
+
+-----------  Coisas para meter no relatório: -----------------------------
+MOSTRAR QUE AS FUNCOES SAO CONVEXAS
+Gráfico do erro em função do ro
+
+COMPARAR COM A NOSSA ABORDAGEM POR CLUSTERING <--- o prof tem expectativas
+
+Ele quer que digamos todas as conclusões que chegámos do problema e da solução, tipo:
+- a,b e c mais próximos implicam que o ro seja menor e vice-versa;
+
+Comentar como é que os nossos métodos reagem se alterarmos um pouco o problema (Flexibilidade dos métodos)
+	Exemplo: dizer que a 'a' e 'b' têm 5 de distancia, qual dos métodos permitem ter melhorias com mais informação
+		- K-means era mau neste caso, mas o nosso método não
+
+Falar dos limites dos métodos: Quando é que eles começam a falhar (tipo a que proximidade de a,b e c é que o método começa a falhar, limites do ro, etc)
+
+Fazer gráfico do método com o ruído. Comentar a partir de que ponto é que o aumento do ruido estraga o método.
+
+Falar sobre o cvx: O cvx é bom para testar formulações de problemas, mas não para problemas especificos, por isso se quisessemos tornar o método mais rápido, uma abordagem seria criar o nosso proprio método de minimização 
+
+Relatório 4 páginas, template na página
+
+No caso do momento, é um bom método caso não haja um nº inicial de classes
+
+
+---------------------------------------------------------------------------
+
+A FAZER:
+
+- Tentar resolver o problema com clustering (K-Means ou outro)
+
+- Fazer média dos clusters dos 3 pontos obtidos pelo logaritmo
+
+- Invés de fazer 5 vezes o cvx e determinar o logaritmo, depois de aplicar a 1ª vez o método fazer as combinações de 3 com todos os pontos e comparar com o método acima
+
+
+
+

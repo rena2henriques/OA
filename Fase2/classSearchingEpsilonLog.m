@@ -51,7 +51,6 @@ for iter=0:20
                     Term2 = Term2+ 1/( norm_ant + 10^(-6)) * norm_atual;  
                   end
                  
-                  Term2 = Term2 + norm(x(:,i) - x(:,j)); 
                end
            end
         end
