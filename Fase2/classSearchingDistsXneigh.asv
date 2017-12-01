@@ -13,11 +13,45 @@ end
 y = awgn(y, 15, 'measured');
 y=y';
 
-closest = nClosest(y,3,60);
+closest = cell(60,1);
+
+for i = 1:60
+    min = Inf;
+    for j = 1:60
+        if i ~= j
+           cur = norm(y(:,i)-y(:,j));
+           if cur < min
+               closest{i}(1)= j;
+               min = cur;
+           end
+        end
+    end
+    min = Inf;
+    
+    for j = 1:60
+        if i ~= j & j ~= closest{i}(1)
+           cur = norm(y(:,i)-y(:,j));
+           if cur < min
+               closest{i}(2)= j;
+               min = cur;
+           end
+        end
+    end
+    min = Inf;
+    for j = 1:60
+        if i ~= j & j ~= closest{i}(1) & j ~= closest{i}(2)
+           cur = norm(y(:,i)-y(:,j));
+           if cur < min
+               closest{i}(3)= j;
+               min = cur;
+           end
+        end
+     end
+end
 %% Grouping points
 
 % Weight of term 2
-ro = 1;
+ro = 5;
 
 norm_atual = 0;
 norm_ant = 0;
@@ -97,8 +131,8 @@ for i=1:length(points(1,:))
             for s=1:60 % for all the sensors
                 %calcular a distancia entre o sensor s e todos os pontos
 
-                
-                [min_norm, min_ind] = min([norm(y(:,s) - points(:,i)) norm(y(:,s) - points(:,j)) norm(y(:,s) - points(:,k))]);
+                norms=[norm(y(:,s) - points(:,i)) norm(y(:,s) - points(:,j)) norm(y(:,s) - points(:,k))];
+                [min_norm, min_ind] = min(norms);
 
                 if min_ind==1
                     OmegaP = [OmegaP , s];
@@ -110,17 +144,17 @@ for i=1:length(points(1,:))
 
             end
        
+
             % obter novas posicoes de xp por minimizacao    
             cvx_begin quiet   
             variable xp(3, 1);
 
             Term1=0;
 
-            for w=1:length(OmegaP)
-                Term1 = Term1 + (y(:,OmegaP(w))-xp)'*(y(:,OmegaP(w))-xp);
+            for k=1:length(OmegaP)
+                Term1 = Term1 + (y(:,OmegaP(k))-xp)'*(y(:,OmegaP(k))-xp);
             end
 
-            
             minimize(Term1);
 
             cvx_end;
@@ -131,8 +165,8 @@ for i=1:length(points(1,:))
 
             Term1=0;
 
-            for w=1:length(OmegaQ)
-                Term1 = Term1 + (y(:,OmegaQ(w))-xq)'*(y(:,OmegaQ(w))-xq);
+            for k=1:length(OmegaQ)
+                Term1 = Term1 + (y(:,OmegaQ(k))-xq)'*(y(:,OmegaQ(k))-xq);
             end
 
             minimize(Term1);
@@ -143,8 +177,8 @@ for i=1:length(points(1,:))
 
             Term1=0;
 
-            for w=1:length(OmegaR)
-                Term1 = Term1 + (y(:,OmegaR(w))-xr)'*(y(:,OmegaR(w))-xr);
+            for k=1:length(OmegaQ)
+                Term1 = Term1 + (y(:,OmegaR(k))-xr)'*(y(:,OmegaR(k))-xr);
             end
 
             minimize(Term1);
@@ -158,11 +192,13 @@ for i=1:length(points(1,:))
                 erro = erro +(y(:,OmegaP(k))-xp)'*(y(:,OmegaP(k))-xp);
             end
             for k=1:length(OmegaQ)
+           
                 erro = erro +(y(:,OmegaQ(k))-xq)'*(y(:,OmegaQ(k))-xq);
                 
             end
             for k=1:length(OmegaR)
-                erro = erro +(y(:,OmegaR(k))-xr)'*(y(:,OmegaR(k))-xr);
+                
+                erro = erro +(y(:,OmegaP(k))-xp)'*(y(:,OmegaP(k))-xr);
             end
             % se for menor, guardar apenas o i e j deste erro
             % c.c. deixa-se estar
@@ -170,15 +206,15 @@ for i=1:length(points(1,:))
                 erromin=erro;
                 xpmin=xp;
                 xqmin=xq;
-                xrmin=xr;
             end
         end
   
     end
 end
-%% error 
+
+%%
+
 minimum = [];
-classPred=[xpmin xqmin xrmin]
 for j = 1:length(class)
     for i = 1:length(classPred)
         minimum(j,i) = norm(classPred(:,i)-class(:,j));
@@ -186,20 +222,26 @@ for j = 1:length(class)
     [m mind]= min(minimum(j,:));
     mi(j) =  [mind];
 end
-cP = classPred(:,mi)
+
+cP = classPred(:,mi);
+
 for i=1:3
     error(i) = norm(cP(:,i))-norm(class(:,i));
 end
+
 error
 
-%%
-figure();
-%plot the resuts
-scatter3(xrmin(1,:),xrmin(2,:),xrmin(3,:),'ro');
+est = [ mean(y(:,group{1})')' mean(y(:,group{2})')' mean(y(:,group{3})')']
+
+%plot the result
+figure(1); 
+clf; 
+% printing in 2D for now
+plot(y(1,:),y(2,:),'x'); 
 hold on
-scatter3(xqmin(1,:),xqmin(2,:),xqmin(3,:),'ro');
-hold on
-scatter3(xpmin(1,:),xpmin(2,:),xpmin(3,:),'ro');
+plot(x(1,:),x(2,:),'ro');
+figure(2);
+scatter3(x(1,:),x(2,:),x(3,:),'ro');
 hold on
 scatter3(y(1,:),y(2,:),y(3,:),'x');
 axis('equal'); 
