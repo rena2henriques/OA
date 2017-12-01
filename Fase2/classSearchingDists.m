@@ -5,20 +5,21 @@ class = [[5 0 0];[0 5 0];[0 0 5];];
 y = [];
 for i = 1:60
     % generates a random integer between 1 and 3
-    classtype(i) = round(rand*2)+1;
+    classtype(i) = fix(rand*3)+1;
     
     y = [y; class(classtype(i),:)];
 end
 
-y = awgn(y, 15, 'measured');
+%y = awgn(y, 15, 'measured');
+y=y+randn(60,3)*0.75;
 y=y';
 
 load('y.mat');
 
 %% Grouping points
-
+%load('yValues.mat');
 % Weight of term 
-ro = 10;
+ro = 0.5;
 
 cvx_begin quiet
     variable x(3, 60);
@@ -43,12 +44,16 @@ cvx_begin quiet
     % nothing
     
 cvx_end
+
+points = (unique(round(x, 3)','rows'))';
+length(points);
 %%
 %plot the result
 figure(1); 
 clf; 
 % printing in 2D for now
 plot(y(1,:),y(2,:),'x'); 
+
 hold on
 plot(x(1,:),x(2,:),'ro');
 hold off;
