@@ -1,6 +1,6 @@
 %% Generating Points
 % equidistant classes
-class = [[0 0 10];[0 10 0];[10 0 0];];
+class = [[10 0 0];[0 10 0];[0 0 10];];
 
 y = [];
 for i = 1:60
@@ -15,11 +15,8 @@ y=y';
 
 %% Grouping points
 
-% distance ref
-epsilon = 0.5;
-
 % Weight of term 2
-ro = 0.1
+ro = 1
 
 cvx_begin quiet
     variable x(3, 60);
@@ -34,7 +31,9 @@ cvx_begin quiet
 
     for i=1:60
        for j=i+1:60
-              Term2 = Term2 + norm(x(:,i) - x(:,j))/(norm(y(:,i) - y(:,j)) + 10^(-6)); 
+           if( nbours() == y() && nbours() == y() && nbours() == y())
+              Term2 = Term2 + norm(x(:,i) - x(:,j)); 
+           end
        end
     end
     
@@ -44,6 +43,8 @@ cvx_begin quiet
     % nothing
     
 cvx_end
+
+
 
 %plot the result
 figure(1); 
@@ -58,3 +59,4 @@ hold on
 scatter3(y(1,:),y(2,:),y(3,:),'x');
 axis('equal'); 
 grid on;
+

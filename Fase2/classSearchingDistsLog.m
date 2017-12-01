@@ -26,7 +26,7 @@ x_old = zeros([3, 60]);
 norm_atual = 0;
 norm_ant = 0;
 
-for iter=0:5
+for iter=0:3
 
     cvx_begin quiet
         variable x(3, 60);
@@ -84,8 +84,34 @@ end
 
 % Fazer cvx para as 3 classes
 
+classPred = zeros(3);
 
+for p=1:3
+    cvx_begin quiet   
+        variable pred(3,1);
+  
+        Term1=0;
 
+        for k=1:length(group{p})
+            Term1 = Term1 + (y(:, group{p}(k)) - pred)'*(y(:, group{p}(k)) - pred);
+        end
+
+        minimize(Term1);
+        
+        % subject to  
+        %nothing
+    cvx_end;
+    
+    pred'
+    
+    %inserts point in the predictions array
+    classPred(:,p) = pred';
+    
+end
+
+for i=1:3
+    error(i) = norm(classPred(:,i)-class(:,i));
+end
 
 %plot the result
 figure(1); 
