@@ -19,7 +19,7 @@ y=y';
 epsilon = 0.7;
 
 % Weight of term 2
-ro = 2
+ro = 10
 
 x_old = zeros([3, 60]);
 
@@ -66,9 +66,19 @@ for iter=0:20
     
     x_old = x;
 end
+%%
 
+%plot the result
+figure(1); 
+clf; 
+% printing in 2D for now
+%plot(x(1,:),x(2,:),'ro'); 
+scatter3(x(1,:),x(2,:),x(3,:),'ro');
+axis('equal'); 
+grid on;
 
 %% POLISHING THE PREVIOUS RESULTS
+
 points = (unique(round(x, 3)','rows'))';
 
 OmegaP = {};
@@ -83,76 +93,89 @@ xrmin=zeros(3,1);
 
 for i=1:length(points(1,:))
     for j=i+1:length(points(1,:))
-        
-        % dar clear dos OmegaP e OmegaQ
-        OmegaP=[];
-        OmegaQ=[]; 
-        OmegaR=[]; 
-        
-        for s=1:60 % for all the sensors
-            %calcular a distancia entre o sensor s e o ponto i
-            %calcular a distancia entre o sensor s e o ponto j
-            if (norm(y(:,s) - points(:,i)) < norm(y(:,s) - points(:,j)) && )
-                OmegaP = [OmegaP , s]; %<-- guardamos os indices de todos os sensores que pertencem à classe
-                                       %para depois podermos aceder à matriz a e B
-            else    
-                OmegaQ = [OmegaQ , s];
+        for r=j+1:length(points(1,:))
+
+            % dar clear dos OmegaP e OmegaQ
+            OmegaP=[];
+            OmegaQ=[]; 
+            OmegaR=[]; 
+
+            for s=1:60 % for all the sensors
+                %calcular a distancia entre o sensor s e o ponto i
+                %calcular a distancia entre o sensor s e o ponto j
+                if norm(y(:,s) - points(:,i)) < norm(y(:,s) - points(:,j)) && norm(y(:,s) - points(:,i)) < norm(y(:,s) - points(:,r))
+                    OmegaP = [OmegaP , s]; %<-- guardamos os indices de todos os sensores que pertencem à classe
+                                           %para depois podermos aceder à matriz a e B
+                elseif norm(y(:,s) - points(:,j)) < norm(y(:,s) - points(:,i)) && norm(y(:,s) - points(:,j)) < norm(y(:,s) - points(:,r))  
+                    OmegaQ = [OmegaQ , s];
+                else
+                    OmegaR= [OmegaR , s];        
+                end
+
             end
+
+            % obter novas posicoes de xp por minimizacao    
+            cvx_begin quiet   
+            variable xp(3, 1);
+
+            Term1=0;
+
+                for k=1:length(OmegaP)
+                    Term1 = Term1 + (y(:,OmegaP(k)) - xp)'*(y(:,OmegaP(k)) - xp);
+                end
+
+            minimize(Term1);
+
+            cvx_end
+
+            %nova posicao de xq
+            cvx_begin quiet   
+            variable xq(3, 1);
+
+            Term1=0;
+
+            for k=1:length(OmegaQ)
+                Term1 = Term1 + (y(:,OmegaQ(k)) - xq)'*(y(:,OmegaQ(k)) - xq);
+            end
+
+            minimize(Term1);
+
+            cvx_end
             
-        end
-        
-        % obter novas posicoes de xp por minimizacao    
-        cvx_begin quiet   
-        variable xp(2, 1);
-        variable tp;
+            cvx_begin quiet   
+            variable xr(3, 1);
 
-        Term1=0;
+            Term1=0;
 
-        for k=1:length(OmegaP)
-            Term1 = Term1 + (a(:,OmegaP(k))'*[xp(:) ; tp] - B(OmegaP(k)))^2;
-        end
+            for k=1:length(OmegaR)
+                Term1 = Term1 + (y(:,OmegaR(k)) - xr)'*(y(:,OmegaR(k)) - xr);
+            end
 
-        minimize(Term1);
-        
-        % subject to  
-        xp(:)'*xp(:)<= tp;
-                   
-        cvx_end;
-        
-        %nova posicao de xq
-        cvx_begin quiet   
-        variable xq(2, 1);
-        variable tq;
+            minimize(Term1);
 
-        Term1=0;
+            cvx_end
 
-        for k=1:length(OmegaQ)
-            Term1 = Term1 + (a(:,OmegaQ(k))'*[xq(:) ; tq] - B(OmegaQ(k)))^2;
+            % calculo do erro, comparar com o previous error
+            erro=0;
+            for k=1:length(OmegaP)
+                erro=erro+(y(:,OmegaP(k)) - xp)'*(y(:,OmegaP(k)) - xp);
+            end
+            for k=1:length(OmegaQ)
+                erro=erro+(y(:,OmegaQ(k)) - xq)'*(y(:,OmegaQ(k)) - xq);
+            end
+            for k=1:length(OmegaR)
+                erro=erro+(y(:,OmegaR(k)) - xr)'*(y(:,OmegaR(k)) - xr);
+            end
+    
+            % se for menor, guardar apenas o i e j deste erro
+            % c.c. deixa-se estar
+            if erro<erromin
+                erromin=erro;
+                xpmin=xp;
+                xqmin=xq;
+                xrmin=xr;
+            end
         end
-
-        minimize(Term1);
-        
-        % subject to  
-        xq(:)'*xq(:)<= tq;
-                   
-        cvx_end;
-        
-        % calculo do erro, comparar com o previous error
-        erro=0;
-        for k=1:length(OmegaP)
-            erro=erro+(norm(sensors(:,OmegaP(k))-xp(:))-d(OmegaP(k)))*(norm(sensors(:,OmegaP(k))-xp(:))-d(OmegaP(k)));
-        end
-        for k=1:length(OmegaQ)
-            erro=erro+(norm(sensors(:,OmegaQ(k))-xq(:))-d(OmegaQ(k)))*(norm(sensors(:,OmegaQ(k))-xq(:))-d(OmegaQ(k)));
-        end
-        % se for menor, guardar apenas o i e j deste erro
-        % c.c. deixa-se estar
-        if(erro<erromin)
-            erromin=erro;
-            xpmin=xp;
-            xqmin=xq;
-        end
-        
     end
 end
 
@@ -162,14 +185,13 @@ end
 
 
 %%
-
-%plot the result
 figure(1); 
 clf; 
-% printing in 2D for now
-%plot(x(1,:),x(2,:),'ro'); 
-scatter3(x(1,:),x(2,:),x(3,:),'ro');
+plot3(xpmin(1),xpmin(2),xpmin(3),'ro'); 
+hold on
+plot3(xqmin(1),xqmin(2),xqmin(3),'ro'); 
+hold on
+plot3(xrmin(1),xrmin(2),xrmin(3),'ro'); 
 axis('equal'); 
 grid on;
-
 
