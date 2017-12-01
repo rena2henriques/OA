@@ -14,6 +14,7 @@ y = awgn(y, 15, 'measured');
 y=y';
 
 closest = nClosest(y,5,60);
+load('y.mat');
 %% Grouping points
 
 % Weight of term 2
@@ -70,6 +71,8 @@ for iter=0:5
     hold off;
     x_old = x;
 end
+points = (unique(round(x, 3)','rows'))';
+fprintf('Number of Points:%d',length(points));
 
 %% Polishing Results 
 
