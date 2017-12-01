@@ -1,6 +1,6 @@
 %% Generating Points
 % equidistant classes
-class = [[10 0 0];[0 10 0];[0 0 10];];
+class = [[5 0 0];[0 5 0];[0 0 5];];
 
 y = [];
 for i = 1:60
