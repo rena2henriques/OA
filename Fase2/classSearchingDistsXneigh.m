@@ -13,7 +13,7 @@ end
 y = awgn(y, 15, 'measured');
 y=y';
 
-closest = nClosest(y,3,60);
+closest = nClosest(y,5,60);
 %% Grouping points
 
 % Weight of term 2
