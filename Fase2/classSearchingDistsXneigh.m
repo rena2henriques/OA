@@ -13,12 +13,13 @@ end
 y = awgn(y, 15, 'measured');
 y=y';
 
-closest = nClosest(y,5,60);
 load('y.mat');
+closest = nClosest(y,5,60);
+
 %% Grouping points
 
 % Weight of term 2
-ro = 1;
+ro = 1000;
 
 norm_atual = 0;
 norm_ant = 0;
