@@ -50,10 +50,22 @@ function [ X, P , ERRO] = metodo2( Ro, y, closest, numNeig, class)
                 fprintf('Neigbors: %d\tRo:%d\tIter:%d\n',numNeig,ro, iter);
 
             cvx_end
-    %%
+                %%
             x_old = x;
             points = length((unique(round(x, 3)','rows'))');
         end
+        
+        uniquex = (unique(round(x, 3)','rows'))';
+        error=[];
+        for i = 1:length( uniquex(1,:))
+        	minimum = [];
+            for j = 1:length(class)
+            	minimum = [minimum norm(uniquex(:,i)-class(:,j))];
+            end
+            [m mind]= min(minimum);
+            error=[error; norm(uniquex(:,i)-class(:,mind))];
+        end
+        ERRO(r)=sum(error.^2)/length(uniquex(1,:));
         
         P(r) = points;
         X{r} = x;       

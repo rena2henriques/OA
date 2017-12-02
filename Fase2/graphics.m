@@ -16,7 +16,8 @@ for nei = 1:30
         end
 
         ERRO(nei)=sum(error.^2)/length(uniquex(1,:));
-        fprintf('Neigbor: %d\tRo: %d\tErro: %f\tPoints: %d\n',nei, ro, ERRO(nei), length( uniquex(1,:)));
+        tamanho(nei)=length( uniquex(1,:));
+        fprintf('Neigbor: %d\tRo: %d\tErro: %f\tPoints: %d\n',nei, ro, ERRO(nei), tamanho(nei));
 end
 save(['method2/errorPlotRo',num2str(ro),'Neig',num2str(nei),'.mat']);
 
