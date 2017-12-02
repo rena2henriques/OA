@@ -1,6 +1,6 @@
 %% Generating Points
 % equidistant classes
-class = [[5 0 0];[0 5 0];[0 0 5];];
+class = [[0 0 0];[2.5 2.5 0];[-2.5 2.5 0];];
 
 y = [];
 for i = 1:60
@@ -14,7 +14,7 @@ end
 y=y+randn(60,3)*0.75;
 y=y';
 %%
-%load('y.mat');
+load('y.mat');
 closest = nClosest(y,5,60);
 
 %% Grouping points
@@ -148,13 +148,16 @@ grid on;
 
 %% Polishing Results with Omegas <--- POR MUDAR AINDA 
 
+%% Polishing Results 
+
 points = (unique(round(x, 3)','rows'))';
+fprintf('Number of points:%d',length(points));
 
 OmegaP = {};
 OmegaQ = {};
 OmegaR= {};
 
-erromin=1000000;
+erromin=Inf;
 xpmin=zeros(3,1);
 xqmin=zeros(3,1);
 xrmin=zeros(3,1);
@@ -226,7 +229,7 @@ for i=1:length(points(1,:))
             cvx_end;
             
             
-            
+%%
             % calculo do erro, comparar com o previous error
             erro=0;
             for k=1:length(OmegaP)
@@ -251,7 +254,7 @@ for i=1:length(points(1,:))
   
     end
 end
-% error 
+%% error 
 minimum = [];
 classPred=[xpmin xqmin xrmin]
 for j = 1:length(class)
@@ -265,18 +268,16 @@ cP = classPred(:,mi)
 for i=1:3
     error(i) = norm(cP(:,i))-norm(class(:,i));
 end
-error
 
-%%
-figure();
+MSE=sqrt(sum(error.^2))/3;
+
+
+figure(4);
 %plot the resuts
+hold on;
 scatter3(xrmin(1,:),xrmin(2,:),xrmin(3,:),'ro');
-hold on
 scatter3(xqmin(1,:),xqmin(2,:),xqmin(3,:),'ro');
-hold on
 scatter3(xpmin(1,:),xpmin(2,:),xpmin(3,:),'ro');
-hold on
 scatter3(y(1,:),y(2,:),y(3,:),'x');
 axis('equal'); 
 grid on;
-
