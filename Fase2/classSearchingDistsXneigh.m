@@ -15,7 +15,7 @@ y=y+randn(60,3)*0.75;
 y=y';
 
 closest = nClosest(y,5,60);
-load('y.mat');
+%load('y.mat');
 %% Grouping points
 
 % Weight of term 2
