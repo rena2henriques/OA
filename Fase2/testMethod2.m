@@ -1,12 +1,26 @@
 load('testMethod2.mat');
-load('y.mat');
-for numNeig = 1:30
-    closest = nClosest(y,numNeig,60);
-    Ro = [ 1 2 3 4 5 6 7 8 9 10];
+class = [[10 0 0];[0 10 0];[0 0 10];];
 
-    [X, P] = metodo2(Ro, y, closest, numNeig);
+y = [];
+for i = 1:60
+    % generates a random integer between 1 and 3
+    classtype(i) = fix(rand*3)+1;
+    
+    y = [y; class(classtype(i),:)];
+end
+
+%y = awgn(y, 15, 'measured');
+y=y+randn(60,3)*0.75;
+y=y';
+%load('y.mat');
+for numNeig = 10:12
+    closest = nClosest(y,numNeig,60);
+    %Ro = [ 1 2 3 4 5 6 7 8 9 10];
+    Ro = [15];
+
+    [X, P, E] = metodo2(Ro, y, closest, numNeig, class);
     %%
-    save(['method2/testMethod2n',num2str(numNeig),'.mat']);
+    save(['method22/testMethod2n',num2str(numNeig),'.mat']);
     %%
     for i = length(Ro):-1:1
         h(i)=figure();
@@ -14,10 +28,10 @@ for numNeig = 1:30
         hold on
         scatter3(y(1,:),y(2,:),y(3,:),'x');
         hold off;
-        title(['Ro: ',num2str(Ro(i)),'    Points: ',num2str(P(i)),'    Neighbors: ',num2str(numNeig)]);
+        title(['Ro: ',num2str(Ro(i)),'    Points: ',num2str(P(i)),'    Neighbors: ',num2str(numNeig),'    Erro: ',num2str(E)]);
         %%pause(5/10);
     end
-    savefig(h,['method2/m2n',num2str(numNeig),'.fig']);
+    savefig(h,['method22/m2n',num2str(numNeig),'.fig']);
     close(h);
 end
 save('testMethod2.mat');

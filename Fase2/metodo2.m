@@ -1,4 +1,4 @@
-function [ X, P ] = metodo2( Ro, y, closest, numNeig)
+function [ X, P , ERRO] = metodo2( Ro, y, closest, numNeig, class)
     
     P = zeros(length(Ro),1);
     X = cell(length(Ro),1);

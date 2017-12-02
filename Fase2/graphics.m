@@ -1,6 +1,6 @@
 
 for nei = 1:30
-    ro = 5;
+    ro = 3;
     class = [[5 0 0];[0 5 0];[0 0 5];];
     load(['method2/testMethod2n',num2str(nei),'.mat']);
     uniquex = (unique(round(X{ro}, 3)','rows'))';
