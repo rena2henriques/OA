@@ -4,7 +4,7 @@ load('group15dataset.mat');
 for i=1:64
    B(i)=d(:,i)^2-norm(sensors(:,i))^2;
 end
-ro=10;
+ro=0.1;
 
 x_old = zeros([2, 64]);
 t_old = zeros([64,1]);
