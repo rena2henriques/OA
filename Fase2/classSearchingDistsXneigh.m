@@ -5,7 +5,7 @@ class = [[5 0 0];[0 5 0];[0 0 5];];
 y = [];
 for i = 1:60
     % generates a random integer between 1 and 3
-    classtype(i) = round(rand*2)+1;
+    classtype(i) = fix(rand*3)+1;
     
     y = [y; class(classtype(i),:)];
 end
@@ -13,13 +13,14 @@ end
 %y = awgn(y, 15, 'measured');
 y=y+randn(60,3)*0.75;
 y=y';
-
-closest = nClosest(y,5,60);
+%%
 %load('y.mat');
+closest = nClosest(y,5,60);
+
 %% Grouping points
 
 % Weight of term 2
-ro = 1;
+ro = 5;
 
 norm_atual = 0;
 norm_ant = 0;
@@ -72,10 +73,80 @@ for iter=0:5
     hold off;
     x_old = x;
 end
-points = (unique(round(x, 3)','rows'))';
+
 fprintf('Number of Points:%d',length(points));
 
-%% Polishing Results 
+%% Polishing the results without omegas 
+
+points = (unique(round(x, 3)','rows'))';
+group=cell(1,3);
+
+for i=1:60
+    for p=1:3
+        if( round(x(:,i),3) == points(:,p)) 
+            group{p}=[group{p}, i];
+        end
+    end
+end
+
+% Fazer cvx para as 3 classes
+
+classPred = zeros(3);
+
+for p=1:3
+    cvx_begin quiet   
+        variable pred(3,1);
+  
+        Term1=0;
+
+        for k=1:length(group{p})
+            Term1 = Term1 + (y(:, group{p}(k)) - pred)'*(y(:, group{p}(k)) - pred);
+        end
+
+        minimize(Term1);
+        
+        % subject to  
+        %nothing
+    cvx_end;
+    
+    pred'
+    
+    %inserts point in the predictions array
+    classPred(:,p) = pred';
+    
+end
+
+minimum = [];
+for j = 1:length(class)
+    for i = 1:length(classPred)
+        minimum(j,i) = norm(classPred(:,i)-class(:,j));
+    end
+    [m mind]= min(minimum(j,:));
+    mi(j) =  [mind];
+end
+cP = classPred(:,mi)
+for i=1:3
+    error(i) = norm(cP(:,i))-norm(class(:,i));
+end
+
+MSE=sum(error.^2)/3;
+
+%plot the result
+figure(1); 
+clf; 
+% printing in 2D for now
+plot(y(1,:),y(2,:),'x'); 
+hold on
+plot(x(1,:),x(2,:),'ro');
+figure(2);
+scatter3(x(1,:),x(2,:),x(3,:),'ro');
+hold on
+scatter3(y(1,:),y(2,:),y(3,:),'x');
+axis('equal'); 
+grid on;
+
+
+%% Polishing Results with Omegas <--- POR MUDAR AINDA 
 
 points = (unique(round(x, 3)','rows'))';
 
@@ -180,7 +251,7 @@ for i=1:length(points(1,:))
   
     end
 end
-%% error 
+% error 
 minimum = [];
 classPred=[xpmin xqmin xrmin]
 for j = 1:length(class)
