@@ -1,6 +1,6 @@
 %% Generating Points
 % equidistant classes
-class = [[5 0 0];[0 5 0];[0 0 5];];
+class = [[10 0 0];[0 10 0];[0 0 10];];
 
 y = [];
 for i = 1:60
@@ -15,9 +15,9 @@ y=y+randn(60,3)*0.75;
 y=y';
 
 %% Grouping points
-%load('yValues.mat');
+%load('y.mat');
 % Weight of term 
-ro = 10;
+ro = 3;
 
 cvx_begin quiet
     variable x(3, 60);
@@ -42,9 +42,22 @@ cvx_begin quiet
     % nothing
     
 cvx_end
+%%
+    points = (unique(round(x, 3)','rows'))';
+    length(points(1,:))
+    % error
 
-points = (unique(round(x, 3)','rows'))';
-length(points);
+    error=[];
+    for i = 1:length(points(1,:))
+        minimum = [];
+        for j = 1:length(class)
+             minimum = [minimum norm(points(:,i)-class(:,j))];
+        end
+        [m mind]= min(minimum);
+        error=[error; norm(points(:,i)-class(:,mind))];
+    end
+
+    ERRO=sum(error)/length(points(1,:))
 %%
 
 %plot the result
@@ -61,6 +74,8 @@ hold on
 scatter3(y(1,:),y(2,:),y(3,:),'x');
 axis('equal'); 
 grid on;
+
+
 
 %% Polishing Results 
 

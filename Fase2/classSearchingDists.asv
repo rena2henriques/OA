@@ -5,18 +5,19 @@ class = [[10 0 0];[0 10 0];[0 0 10];];
 y = [];
 for i = 1:60
     % generates a random integer between 1 and 3
-    classtype(i) = round(rand*2)+1;
+    classtype(i) = fix(rand*3)+1;
     
     y = [y; class(classtype(i),:)];
 end
 
-y = awgn(y, 15, 'measured');
+%y = awgn(y, 15, 'measured');
+y=y+randn(60,3)*0.75;
 y=y';
 
 %% Grouping points
-load('yValues.mat');
+%load('y.mat');
 % Weight of term 
-ro = 3
+ro = 3;
 
 cvx_begin quiet
     variable x(3, 60);
@@ -41,16 +42,30 @@ cvx_begin quiet
     % nothing
     
 cvx_end
-
-points = (unique(round(x, 3)','rows'))';
-length(points);
-
 %%
+    points = (unique(round(x, 3)','rows'))';
+    length(points(1,:))
+    % error
+
+    error=[];
+    for i = 1:length(points(1,:))
+        minimum = [];
+        for j = 1:length(class)
+             minimum = [minimum norm(points(:,i)-class(:,j))];
+        end
+        [m mind]= min(minimum);
+        error=[error; norm(points(:,i)-class(:,mind))];
+    end
+
+    ERRO=sum(error)/length(points(1,:))
+%%
+
 %plot the result
 figure(1); 
 clf; 
 % printing in 2D for now
 plot(y(1,:),y(2,:),'x'); 
+
 hold on
 plot(x(1,:),x(2,:),'ro');
 figure(2);
@@ -59,6 +74,8 @@ hold on
 scatter3(y(1,:),y(2,:),y(3,:),'x');
 axis('equal'); 
 grid on;
+
+
 
 %% Polishing Results 
 
