@@ -62,22 +62,22 @@ cvx_end
 
     ERRO=sum(error)/length(points(1,:))
 %%
-%plot the result
-figure(1); 
-clf; 
-% printing in 2D for now
-plot(y(1,:),y(2,:),'x'); 
-
-hold on
-plot(x(1,:),x(2,:),'ro');
-hold off;
-figure(2);
-scatter3(x(1,:),x(2,:),x(3,:),'ro');
-hold on
-scatter3(y(1,:),y(2,:),y(3,:),'x');
-axis('equal'); 
-hold off;
-grid on;
+% %plot the result
+% figure(1); 
+% clf; 
+% % printing in 2D for now
+% plot(y(1,:),y(2,:),'x'); 
+% 
+% hold on
+% plot(x(1,:),x(2,:),'ro');
+% hold off;
+% figure(2);
+% scatter3(x(1,:),x(2,:),x(3,:),'ro');
+% hold on
+% scatter3(y(1,:),y(2,:),y(3,:),'x');
+% axis('equal'); 
+% hold off;
+% grid on;
 
 
 
@@ -162,7 +162,6 @@ for i=1:length(points(1,:))
             cvx_end;
             
             
-%%
             % calculo do erro, comparar com o previous error
             erro=0;
             for k=1:length(OmegaP)
@@ -187,7 +186,7 @@ for i=1:length(points(1,:))
   
     end
 end
-%% error 
+% error 
 minimum = [];
 classPred=[xpmin xqmin xrmin]
 for j = 1:length(class)
@@ -201,7 +200,8 @@ cP = classPred(:,mi)
 for i=1:3
     error(i) = norm(cP(:,i))-norm(class(:,i));
 end
-ERRO=sqrt(sum(error.^2))
+
+MSE=sum(error.^2)/3;
 
 %%
 figure(4);

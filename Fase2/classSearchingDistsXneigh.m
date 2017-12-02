@@ -1,6 +1,6 @@
 %% Generating Points
 % equidistant classes
-class = [[5 0 0];[0 5 0];[0 0 5];];
+class = [[2 0 0];[0 2 0];[0 0 2];];
 
 y = [];
 for i = 1:60
@@ -10,12 +10,15 @@ for i = 1:60
     y = [y; class(classtype(i),:)];
 end
 
-%y = awgn(y, 15, 'measured');
-y=y+randn(60,3)*0.75;
-y=y';
+
+load('noise.mat');
 %%
-load('y.mat');
-closest = nClosest(y,5,60);
+load('ypos2_noise.mat');
+factor=1.;
+y=y+noise*factor;
+y=y';
+nei=4;
+closest = nClosest(y,nei,60);
 
 %% Grouping points
 
@@ -66,21 +69,21 @@ for iter=0:5
     
     iter
     
-    plot(y(1,:),y(2,:),'x'); 
-    hold on;
-    plot(x(1,:),x(2,:),'ro');
-    pause(5/1000);
-    hold off;
-    x_old = x;
+%     plot(y(1,:),y(2,:),'x'); 
+%     hold on;
+%     plot(x(1,:),x(2,:),'ro');
+%     pause(5/1000);
+%     hold off;
+%     x_old = x;
 end
 
-%%
+
 points = (unique(round(x, 3)','rows'))';
 fprintf('Number of Points:%d',length(points));
 
 
 
-%% Polishing the results without omegas - only if points is less or equal than 3.
+% Polishing the resu   lts without omegas - only if points is less or equal than 3.
 if length(points(1,:)) <=3
     
     group=cell(1,3);
@@ -322,7 +325,7 @@ else
     xpmin=xp;
     xqmin=xq;
     xrmin=xr;
-
+%%
     % error 
     minimum = [];
     classPred=[xpmin xqmin xrmin];
@@ -343,6 +346,7 @@ else
     MSE=sum(error.^2)/3;
 
 
+    
     figure(4);
     %plot the resuts
     hold on;

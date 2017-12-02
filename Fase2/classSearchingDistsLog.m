@@ -14,19 +14,24 @@ y = awgn(y, 15, 'measured');
 y=y';
 
 %% Grouping points
-
+class=[[2 0 0];[0 2 0];[0 0 2];];
 % distance ref
-epsilon = 0.5;
+%epsilon = 0.5;
+
+load('ypos2_noise.mat');
+factor=1.5;
+y=y+noise*factor;
+y=y';
 
 % Weight of term 2
-ro = 1;
+ro = 5;
 
 x_old = zeros([3, 60]);
 
 norm_atual = 0;
 norm_ant = 0;
 
-for iter=0:3
+for iter=0:5
 
     cvx_begin quiet
         variable x(3, 60);
@@ -61,19 +66,19 @@ for iter=0:3
     
     iter
     
-    plot(y(1,:),y(2,:),'x'); 
-    hold on;
-    plot(x(1,:),x(2,:),'ro');
-    pause(5/1000);
-    hold off;
-    x_old = x;
+%     plot(y(1,:),y(2,:),'x'); 
+%     hold on;
+%     plot(x(1,:),x(2,:),'ro');
+%     pause(5/1000);
+%     hold off;
+%     x_old = x;
 end
 
 %% Polishing the results
 
 points = (unique(round(x, 3)','rows'))';
 group=cell(1,3);
-
+%
 for i=1:60
     for p=1:3
         if( round(x(:,i),3) == points(:,p)) 
@@ -81,7 +86,7 @@ for i=1:60
         end
     end
 end
-
+%%
 % Fazer cvx para as 3 classes
 
 classPred = zeros(3);
@@ -109,10 +114,21 @@ for p=1:3
     
 end
 
-for i=1:3
-    error(i) = norm(classPred(:,i)-class(:,i));
-end
+ minimum = [];
+    error=[];
+    for i = 1:length(classPred)
+        minimum = [];
+        for j = 1:length(class)  
+            minimum =[minimum norm(classPred(:,i)-class(:,j))];
+        end
+        [m mind]= min(minimum);
+        mind
+        error(i) = norm(classPred(:,i)-class(:,mind));
+    end
 
+
+MSE=sum(error.^2)/3;
+    
 %plot the result
 figure(1); 
 clf; 
