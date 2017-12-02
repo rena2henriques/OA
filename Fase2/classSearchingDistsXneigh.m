@@ -10,7 +10,8 @@ for i = 1:60
     y = [y; class(classtype(i),:)];
 end
 
-y = awgn(y, 15, 'measured');
+%y = awgn(y, 15, 'measured');
+y=y+randn(60,3)*0.75;
 y=y';
 
 closest = nClosest(y,5,60);
