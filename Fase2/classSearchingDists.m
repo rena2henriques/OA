@@ -14,9 +14,12 @@ end
 y=y+randn(60,3)*0.75;
 y=y';
 
+load('y.mat');
+
 %% Grouping points
 %load('y.mat');
 % Weight of term 
+
 ro = 3;
 
 cvx_begin quiet
@@ -59,7 +62,6 @@ cvx_end
 
     ERRO=sum(error)/length(points(1,:))
 %%
-
 %plot the result
 figure(1); 
 clf; 
@@ -68,11 +70,13 @@ plot(y(1,:),y(2,:),'x');
 
 hold on
 plot(x(1,:),x(2,:),'ro');
+hold off;
 figure(2);
 scatter3(x(1,:),x(2,:),x(3,:),'ro');
 hold on
 scatter3(y(1,:),y(2,:),y(3,:),'x');
 axis('equal'); 
+hold off;
 grid on;
 
 
@@ -80,12 +84,13 @@ grid on;
 %% Polishing Results 
 
 points = (unique(round(x, 3)','rows'))';
+fprintf('Number of points:%d',length(points));
 
 OmegaP = {};
 OmegaQ = {};
 OmegaR= {};
 
-erromin=1000000;
+erromin=Inf;
 xpmin=zeros(3,1);
 xqmin=zeros(3,1);
 xrmin=zeros(3,1);
@@ -157,7 +162,7 @@ for i=1:length(points(1,:))
             cvx_end;
             
             
-            
+%%
             % calculo do erro, comparar com o previous error
             erro=0;
             for k=1:length(OmegaP)
@@ -199,14 +204,12 @@ end
 ERRO=sqrt(sum(error.^2))
 
 %%
-figure();
+figure(4);
 %plot the resuts
+hold on;
 scatter3(xrmin(1,:),xrmin(2,:),xrmin(3,:),'ro');
-hold on
 scatter3(xqmin(1,:),xqmin(2,:),xqmin(3,:),'ro');
-hold on
 scatter3(xpmin(1,:),xpmin(2,:),xpmin(3,:),'ro');
-hold on
 scatter3(y(1,:),y(2,:),y(3,:),'x');
 axis('equal'); 
 grid on;
