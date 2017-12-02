@@ -14,7 +14,7 @@ end
 y=y+randn(60,3)*0.75;
 y=y';
 
-load('y.mat');
+%load('y.mat');
 
 %% Grouping points
 %load('y.mat');
