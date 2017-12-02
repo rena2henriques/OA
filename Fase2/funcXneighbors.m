@@ -93,7 +93,7 @@ function [classPred, x, MSE, points] = funcXneighbors( y, neig, ro, class )
     else
 
     points = (unique(round(x, 3)','rows'))';
-    fprintf('Number of points:%d',length(points));
+    fprintf('Number of points:%d\n',length(points));
 
     OmegaP = {};
     OmegaQ = {};

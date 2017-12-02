@@ -13,9 +13,9 @@ classes{4} = class4';
 classes{5} = class5';
 classes{6} = class6';
 
-rVector = randn(3,60);
+rVector = randn(60,3);
 classtype = fix(rand(60,1)*3)+1;
-factor = 1;
+factor = 0.5;
 %%
 c = ['r','b','g'];
 ro = 2;
@@ -26,8 +26,7 @@ Pts = cell(length(classes));
 X = cell(length(classes));
 %%
 for i = 1:length(classes)
-    y = (classes{i}(:,classtype) + rVector*factor );
-    %%
+
     [classPred, x, mse, points]=funcXneighbors(y, neig, ro, classes{i});
     %%
     CLASSPred{i} = classPred;
