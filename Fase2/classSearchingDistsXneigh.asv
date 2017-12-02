@@ -1,6 +1,6 @@
 %% Generating Points
 % equidistant classes
-class = [[5 0 0];[50 5 0];[0 0 0];];
+class = [[5 0 0];[0 5 0];[0 0 5];];
 
 y = [];
 for i = 1:60
@@ -14,7 +14,7 @@ end
 y=y+randn(60,3)*0.75;
 y=y';
 %%
-load('y.mat');
+%load('y.mat');
 closest = nClosest(y,5,60);
 
 %% Grouping points
@@ -117,17 +117,17 @@ for p=1:3
 end
 
 minimum = [];
-for j = 1:length(class)
-    for i = 1:length(classPred)
-        minimum(j,i) = norm(classPred(:,i)-class(:,j));
+error=[];
+for i = 1:length(classPred)
+    minimum = [];
+    for j = 1:length(class)  
+        minimum =[minimum norm(classPred(:,i)-class(:,j))];
     end
-    [m mind]= min(minimum(j,:));
-    mi(j) =  [mind];
+    [m mind]= min(minimum);
+    mind
+    error(i) = norm(classPred(:,i)-class(:,mind));
 end
-cP = classPred(:,mi)
-for i=1:3
-    error(i) = norm(cP(:,i))-norm(class(:,i));
-end
+
 
 MSE=sum(error.^2)/3;
 
@@ -322,18 +322,21 @@ xrmin=xr;
 
 % error 
 minimum = [];
-classPred=[xpmin xqmin xrmin]
-for j = 1:length(class)
-    for i = 1:length(classPred)
-        minimum(j,i) = norm(classPred(:,i)-class(:,j));
+classPred=[xpmin xqmin xrmin];
+error=[];
+
+minimum = [];
+error=[];
+for i = 1:length(classPred)
+    minimum = [];
+    for j = 1:length(class)  
+        minimum =[minimum norm(classPred(:,i)-class(:,j))];
     end
-    [m mind]= min(minimum(j,:));
-    mi(j) =  [mind];
+    [m mind]= min(minimum);
+    mind
+    error(i) = norm(classPred(:,i)-class(:,mind));
 end
-cP = classPred(:,mi)
-for i=1:3
-    error(i) = norm(cP(:,i))-norm(class(:,i));
-end
+
 
 MSE=sum(error.^2)/3;
 
