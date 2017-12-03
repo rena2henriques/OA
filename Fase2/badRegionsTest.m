@@ -15,7 +15,8 @@ classes{6} = class6';
 
 rVector = randn(3,60);
 classtype = fix(rand(60,1)*3)+1;
-factor = 1;
+%%
+factor = 0.5;
 %%
 c = ['r','b','g'];
 ro = 2;
@@ -28,12 +29,15 @@ X = cell(length(classes));
 for i = 1:length(classes)
     y = (classes{i}(:,classtype) + rVector*factor );
     %%
+    onlyprint = 0;
+    if onlyprint == 0
     [classPred, x, mse, points]=funcXneighbors(y, neig, ro, classes{i});
     %%
     CLASSPred{i} = classPred;
     Pts{i} = points;
     X{i} = x;
     MSE(i) = mse;
+    end
     %%
     figure;
     hold on;
@@ -46,5 +50,5 @@ for i = 1:length(classes)
     grid on;
     hold off;
     pause(1/500);
-    save('badRegionsTest.mat');
+    save('badRegionsTest1Noise05.mat');
 end
