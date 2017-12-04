@@ -32,10 +32,11 @@ classes{14} = class14';
 classes{15} = class15';
 
 %% 
+load('rVectorClasstype.mat');
 %rVector = randn(3,60);
-%classtype = fix(rand(60,1)*3)+1;
+%%classtype = fix(rand(60,1)*3)+1;
 %%
-factor = 0.85;
+factor = 1;
 ONLYPRINT = 0;
 %%
 c = ['r','b','g'];
@@ -54,8 +55,10 @@ for i = 1:length(classes)
     [classPred, x, mse, points]=funcXneighbors(y, neig, ro, classes{i});
     opts = statset('Display','final');
     [ind, ctr] = kmeans(y',3,'Distance','cityblock','Replicates',5,'Options',opts);
+    
     %%
     C{i} = ctr;
+    msek(i) = mse_func(C{i}', classes{i});
     CLASSPred{i} = classPred;
     Pts{i} = points;
     X{i} = x;
@@ -69,7 +72,7 @@ for i = 1:length(classes)
     scatter3(C{i}(:,1), C{i}(:,2), C{i}(:,3), 'mo', 'filled');
     scatter3(classes{i}(1,:), classes{i}(2,:), classes{i}(3,:), 'ro', 'filled');
     legend('Data', 'Estimation', 'Kmeans','True Class');
-    title(['\rho :', num2str(ro),'   Neigbors :', num2str(neig),'   #Points :', num2str(length(Pts{i})),'   MSE :',num2str(MSE(i))]);
+    title(['\rho :', num2str(ro),'   Neigbors :', num2str(neig),'   #Points :', num2str(length(Pts{i})),'   MSE :',num2str(MSE(i)),'  MSE-k-means:',num2str(msek(i))]);
     axis([-3 5 -3 6]);
     grid on;
     hold off;
