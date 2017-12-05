@@ -14,7 +14,7 @@ class13 = [[2.5 0 0];[0 2.5 0];[2.5 0.75 0];];
 class14 = [[2.5 0 0];[0 2.5 0];[2.5 0.5 0];];
 class15 = [[2.5 0 0];[0 2.5 0];[2.5 0.25 0];];
 
-classes = cell(3,1);
+classes = cell(15,1);
 classes{1} = class1';
 classes{2} = class2';
 classes{3} = class3';

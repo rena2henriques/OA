@@ -1,12 +1,12 @@
-function [classPred, x, MSE, points] = funcXneighbors( y, neig, ro, class )
+function [classPred, x, MSE, points] = funcXneighbors( y, neig, ro, class)
     
     closest = nClosest(y,neig,length(y));
     norm_atual = 0;
     norm_ant = 0;
     
-    points = Inf;
+    length_points = Inf;
     for iter=0:5
-        if points <= 3
+        if length_points <= 3
             break;
         end
         cvx_begin quiet
@@ -46,16 +46,17 @@ function [classPred, x, MSE, points] = funcXneighbors( y, neig, ro, class )
 
         cvx_end
         x_old = x;
+        points = (unique(round(x, 3)','rows'))';
+        length_points=length(points);
     end
 
-    points = (unique(round(x, 3)','rows'))';
-
+    
     % Polishing the results without omegas - only if points is less or equal than 3.
-    if length(points(1,:)) <=3
-
+    if length(points(1,:)) <=3 
+        
         group=cell(1,3);
-        for i=1:60
-            for p=1:3
+        for i=1:length(x);
+            for p=1:length(points(1,:))
                 if( round(x(:,i),3) == points(:,p)) 
                     group{p}=[group{p}, i];
                 end
@@ -171,14 +172,14 @@ function [classPred, x, MSE, points] = funcXneighbors( y, neig, ro, class )
 
                     % calculo do erro, comparar com o previous error
                     erro=0;
-                    for k=1:length(OmegaP)
-                        erro = erro +(y(:,OmegaP(k))-xp)'*(y(:,OmegaP(k))-xp);
+                    for w=1:length(OmegaP)
+                        erro = erro +(y(:,OmegaP(w))-xp)'*(y(:,OmegaP(w))-xp);
                     end
-                    for k=1:length(OmegaQ)
-                        erro = erro +(y(:,OmegaQ(k))-xq)'*(y(:,OmegaQ(k))-xq);
+                    for w=1:length(OmegaQ)
+                        erro = erro +(y(:,OmegaQ(w))-xq)'*(y(:,OmegaQ(w))-xq);
                     end
-                    for k=1:length(OmegaR)
-                        erro = erro +(y(:,OmegaR(k))-xr)'*(y(:,OmegaR(k))-xr);
+                    for w=1:length(OmegaR)
+                        erro = erro +(y(:,OmegaR(w))-xr)'*(y(:,OmegaR(w))-xr);
                     end
                     % se for menor, guardar apenas o i e j deste erro
                     % c.c. deixa-se estar
@@ -249,7 +250,7 @@ function [classPred, x, MSE, points] = funcXneighbors( y, neig, ro, class )
     %%
     minimum = [];
     error=[];
-	for i = 1:length(classPred)
+	for i = 1:ndims(classPred)
         minimum = [];
         for j = 1:length(class)  
         	minimum =[minimum norm(classPred(:,i)-class(:,j))];
