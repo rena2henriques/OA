@@ -1,4 +1,4 @@
-function [] = limites( class )
+function [] = limites( class )zz
     
     % descobrir  a distancia minima entre 2 pontos da class
     [npts ptsdim] = size(class);
