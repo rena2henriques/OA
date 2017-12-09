@@ -49,11 +49,11 @@ for c = 1:length(set)
     Pviz{c} = ptsviz;    
 end
 save('comparisonsNei.mat');
-
+%%
 f = figure();
 hold on;
 for c = 1:length(set)   
-    plot(Nei(:),Pviz{c}(:)); 
+    plot(Nei(:),Pviz{c}(:), '.-'); 
 end
 xlabel('Nº of Neighbors');
 ylabel('Nº of Points');
