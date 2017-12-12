@@ -15,7 +15,6 @@ ro = 5;
 neighbors=10;
 [classPred, x, MSE, points]=funcXneighbors(y, neighbors, ro, class');
 classPred = classPred';
-fprintf('%d\n', length(points));
 %%
 figure();
 hold on;
