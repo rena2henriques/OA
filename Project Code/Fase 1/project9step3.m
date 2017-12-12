@@ -72,8 +72,8 @@ grid on;
 % criar um array com todos os valores distintos dos x (atenção que podem
 % ser iguais só até uma certa casa decimal
 
-load('part2points.mat');
-load('group15dataset.mat');
+%load('part2points.mat');
+%load('group15dataset.mat');
 
 %variaveis alfa e beta
 for i=1:64
@@ -164,12 +164,12 @@ for i=1:length(points(1,:))
         
     end
 end
-
+%%
 figure(1); 
 clf; 
-plot(xp(1),xp(2),'ro'); 
+plot(xpmin(1),xpmin(2),'ro'); 
 hold on
-plot(xq(1),xq(2),'ro'); 
+plot(xqmin(1),xqmin(2),'ro'); 
 axis('equal'); 
 grid on;
 
